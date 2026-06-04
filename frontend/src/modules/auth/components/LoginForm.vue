@@ -32,12 +32,18 @@ const handleLogin = async () => {
 
         console.log(response)
 
-        localStorage.setItem(
-            'token',
-            response.data.token
-        )
+        localStorage.setItem('token', response.data.token)
+        localStorage.setItem('user', JSON.stringify(response.data.user))
 
-        router.push('/dashboard')
+        const role = response.data.user?.role
+        
+        if (role === 'HELPDESK') {
+            router.push('/helpdesk/tickets')
+        } else if (role === 'ADMIN') {
+            router.push('/admin/dashboard')
+        } else {
+            router.push('/dashboard')
+        }
 
     } catch (error) {
         console.log(error)
