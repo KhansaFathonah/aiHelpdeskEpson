@@ -5,10 +5,20 @@ defineProps({
     total: Number,
     icon: String
 })
+
+const emit = defineEmits([
+    'select'
+])
 </script>
 
 <template>
-    <div class="issue-card">
+    <div
+        class="issue-card"
+        role="button"
+        tabindex="0"
+        @click="emit('select')"
+        @keyup.enter="emit('select')"
+    >
 
         <div class="issue-left">
             <div class="issue-icon">

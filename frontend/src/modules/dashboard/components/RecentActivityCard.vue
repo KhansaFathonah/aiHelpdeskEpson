@@ -1,13 +1,28 @@
 <script setup>
 defineProps({
     title: String,
+    summary: String,
     time: String,
     status: String,
 })
+
+const formatStatus = (status) => {
+    if (!status) return '-'
+
+    return status
+        .toLowerCase()
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (letter) => letter.toUpperCase())
+}
 </script>
 
 <template>
-    <div class="activity-card">
+    <div
+        class="activity-card"
+        :class="{
+            clickable: status === 'ACTIVE'
+        }"
+    >
 
         <div class="activity-left">
 
@@ -33,7 +48,7 @@ defineProps({
             class="activity-status"
             :class="status?.toLowerCase()"
         >
-            {{ status }}
+            {{ formatStatus(status) }}
         </div>
 
     </div>

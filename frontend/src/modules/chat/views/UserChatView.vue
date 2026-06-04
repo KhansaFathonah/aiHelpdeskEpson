@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 import chatService from '../../../services/chat.service.js'
 import uploadService from '../../../services/upload.service.js'
@@ -14,8 +14,10 @@ import EscalateModal from '../components/EscalateModal.vue'
 import TicketSuccessModal from '../components/TicketSuccessModal.vue'
 
 const router = useRouter()
+const route = useRoute()
 
-const CONFIDENCE_THRESHOLD = 0.6
+const FAQ_THRESHOLD = 0.70
+const ESCALATE_THRESHOLD = 0.50
 
 const message = ref('')
 const loading = ref(false)
@@ -25,7 +27,8 @@ const uploadedImageId = ref(null)
 
 const sessionId = ref(null)
 
-const showUnresolvedCard = ref(false)
+const showFaqSuggestions = ref(false)
+const showEscalateAction = ref(false)
 const showEscalateModal = ref(false)
 const showSuccessModal = ref(false)
 
@@ -38,6 +41,74 @@ const messages = ref([
         text: "Hello! I'm your AI Helpdesk Assistant. How can I help you today?"
     }
 ])
+
+const loadExistingSession = async () => {
+    const existingSessionId = route.params.sessionId
+
+    if (!existingSessionId) return
+
+    try {
+
+        loading.value = true
+
+        const response =
+            await chatService.getSession(existingSessionId)
+
+        const session =
+            response.data.data
+
+        sessionId.value =
+            session.id
+
+        const sessionMessages =
+            session.messages || []
+
+        messages.value =
+            sessionMessages.length
+                ? sessionMessages.map((item) => ({
+                    sender: item.sender,
+                    text: item.messageText,
+                    image: null
+                }))
+                : [
+                    {
+                        sender: 'AI',
+                        text: "Hello! I'm your AI Helpdesk Assistant. How can I help you today?"
+                    }
+                ]
+
+    } catch (error) {
+
+        console.error(error)
+
+        messages.value = [
+            {
+                sender: 'AI',
+                text: 'Failed to load chat session. Please try again later.'
+            }
+        ]
+
+    } finally {
+
+        loading.value = false
+
+    }
+}
+
+const sendInitialQuestion = async () => {
+    const initialQuestion =
+        typeof route.query.initialQuestion === 'string'
+            ? route.query.initialQuestion.trim()
+            : ''
+
+    if (!initialQuestion) return
+
+    message.value = initialQuestion
+
+    await sendMessage()
+
+    router.replace('/chat')
+}
 
 const goBack = () => {
     router.push('/dashboard')
@@ -99,7 +170,8 @@ const sendMessage = async () => {
 
         loading.value = true
 
-        showUnresolvedCard.value = false
+        showFaqSuggestions.value = false
+        showEscalateAction.value = false
 
         const response =
             await chatService.sendMessage({
@@ -133,15 +205,11 @@ const sendMessage = async () => {
             text: aiReply
         })
 
-        if (
-            confidence <
-            CONFIDENCE_THRESHOLD
-        ) {
+        showFaqSuggestions.value =
+            confidence < FAQ_THRESHOLD
 
-            showUnresolvedCard.value =
-                true
-
-        }
+        showEscalateAction.value =
+            confidence < ESCALATE_THRESHOLD
 
         if (selectedImage.value) {
 
@@ -208,6 +276,15 @@ const handleSelectImage = async (file) => {
 
     }
 }
+
+onMounted(() => {
+    if (route.params.sessionId) {
+        loadExistingSession()
+        return
+    }
+
+    sendInitialQuestion()
+})
 </script>
 
 <template>
@@ -315,8 +392,9 @@ const handleSelectImage = async (file) => {
 
                 <!-- UNRESOLVED ISSUE -->
                 <UnresolvedIssueCard
-                    v-if="showUnresolvedCard"
+                    v-if="showFaqSuggestions"
                     :faqs="suggestedFaqs"
+                    :show-escalate="showEscalateAction"
                     @view-faq="
                         router.push('/faq')
                     "

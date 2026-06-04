@@ -1,4 +1,6 @@
 <script setup>
+import { ref } from 'vue';
+
 const props = defineProps({
     ticket: {
         type: Object,
@@ -7,8 +9,11 @@ const props = defineProps({
 });
 
 const emit = defineEmits([
-    'close'
+    'close',
+    'send-comment'
 ]);
+
+const comment = ref('');
 
 const getCategoryName = () => {
     return props.ticket.category?.name
@@ -34,10 +39,21 @@ const getTicketCode = () => {
     return props.ticket.ticketCode || '-';
 };
 
+const formatDate = (date) => {
+    if (!date) return '-';
+
+    return new Date(date).toLocaleDateString();
+};
+
 const formatDateTime = (date) => {
     if (!date) return '-';
 
     return new Date(date).toLocaleString();
+};
+
+const sendComment = () => {
+    emit('send-comment', comment.value);
+    comment.value = '';
 };
 </script>
 
@@ -48,15 +64,9 @@ const formatDateTime = (date) => {
     >
         <div class="ticket-detail-modal">
             <div class="ticket-modal-header">
-                <div>
-                    <span class="label">
-                        Ticket ID
-                    </span>
-
-                    <h2>
-                        {{ getTicketCode() }}
-                    </h2>
-                </div>
+                <h2>
+                    Ticket Details
+                </h2>
 
                 <button
                     class="close-btn"
@@ -66,74 +76,140 @@ const formatDateTime = (date) => {
                 </button>
             </div>
 
-            <div class="ticket-badges">
-                <span
-                    class="status-badge"
-                    :class="ticket.status?.toLowerCase()"
-                >
-                    {{ ticket.status || '-' }}
-                </span>
-
-                <span
-                    class="priority-badge"
-                    :class="ticket.priority?.toLowerCase()"
-                >
-                    {{ ticket.priority || '-' }}
-                </span>
-
-                <span class="category-badge">
-                    {{ getCategoryName() }}
-                </span>
-            </div>
-
-            <p class="ticket-description">
-                {{ ticket.summary || '-' }}
-            </p>
-
-            <div class="ticket-info-grid">
-                <div>
-                    <span class="label">
-                        Assigned To
+            <div class="ticket-modal-body">
+                <div class="ticket-badges">
+                    <span class="ticket-id">
+                        {{ getTicketCode() }}
                     </span>
 
-                    <strong>
-                        {{ getAssignedName() }}
-                    </strong>
-                </div>
-
-                <div>
-                    <span class="label">
-                        Category
+                    <span
+                        class="status-badge"
+                        :class="ticket.status?.toLowerCase()"
+                    >
+                        {{ ticket.status || '-' }}
                     </span>
 
-                    <strong>
+                    <span
+                        class="priority-badge"
+                        :class="ticket.priority?.toLowerCase()"
+                    >
+                        {{ ticket.priority || '-' }}
+                    </span>
+
+                    <span class="category-badge">
                         {{ getCategoryName() }}
-                    </strong>
-                </div>
-
-                <div>
-                    <span class="label">
-                        Created At
                     </span>
-
-                    <strong>
-                        {{ formatDateTime(ticket.createdAt) }}
-                    </strong>
                 </div>
 
-                <div>
-                    <span class="label">
-                        Updated At
-                    </span>
+                <section class="ticket-summary-section">
+                    <h3>
+                        Ringkasan percakapan AI
+                    </h3>
 
+                    <div class="ticket-summary-scroll">
+                        {{ ticket.summary || '-' }}
+                    </div>
+                </section>
+
+                <section class="ticket-info-grid">
+                    <div>
+                        <span class="label">
+                            Created
+                        </span>
+
+                        <strong>
+                            {{ formatDate(ticket.createdAt) }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span class="label">
+                            Last Updated
+                        </span>
+
+                        <strong>
+                            {{ formatDate(ticket.updatedAt) }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span class="label">
+                            Assigned To
+                        </span>
+
+                        <strong>
+                            {{ getAssignedName() }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span class="label">
+                            Category
+                        </span>
+
+                        <strong>
+                            {{ getCategoryName() }}
+                        </strong>
+                    </div>
+                </section>
+
+                <section class="timeline-section">
+                    <h4>
+                        <i class="fa-regular fa-message"></i>
+                        Activity Timeline
+                    </h4>
+
+                    <div class="timeline-item">
+                        <div class="timeline-icon">
+                            <i class="fa-regular fa-user"></i>
+                        </div>
+
+                        <div class="timeline-content">
+                            <div class="timeline-meta">
+                                <strong>
+                                    System
+                                </strong>
+
+                                <small>
+                                    {{ formatDateTime(ticket.createdAt) }}
+                                </small>
+                            </div>
+
+                            <p>
+                                Ticket created from AI chat escalation
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="comment-section">
+                    <label>
+                        Add Comment
+                    </label>
+
+                    <div class="comment-box">
+                        <textarea
+                            v-model="comment"
+                            rows="1"
+                            placeholder="Type your comment..."
+                        ></textarea>
+
+                        <button
+                            class="send-btn"
+                            @click="sendComment"
+                        >
+                            <i class="fa-regular fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </div>
+                </section>
+
+                <div class="ticket-note">
                     <strong>
-                        {{ formatDateTime(ticket.updatedAt) }}
+                        Note:
                     </strong>
+                    Only helpdesk staff and admins can change ticket status.
                 </div>
-            </div>
-
-            <div class="ticket-note">
-                Only helpdesk staff and admins can change ticket status.
             </div>
         </div>
     </div>

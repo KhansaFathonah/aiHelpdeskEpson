@@ -28,7 +28,7 @@ export const aiConfig = {
     ],
   },
   rag: {
-    minSimilarity: finiteNumber(env.RAG_MIN_SIMILARITY, 0.25, { min: -1, max: 1 }),
+    minSimilarity: finiteNumber(env.RAG_MIN_SIMILARITY, 0.45, { min: -1, max: 1 }),
   },
   response: {
     minDelayMs: finiteNumber(env.AI_MIN_RESPONSE_MS, 900, { min: 0, max: 10000 }),

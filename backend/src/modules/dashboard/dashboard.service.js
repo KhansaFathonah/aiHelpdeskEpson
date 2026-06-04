@@ -1,6 +1,6 @@
 import { prisma } from "../../config/prisma.js";
 
-const mapCategoryCounts = async (limit = 6) => {
+const mapCategoryCounts = async (limit = 5) => {
   const [sessionGroups, ticketGroups] = await Promise.all([
     prisma.chatSession.groupBy({
       by: ["categoryId"],
@@ -55,6 +55,15 @@ const getRecentActivity = async (userId, limit = 5) => {
     take: limit,
     include: {
       category: true,
+      messages: {
+        orderBy: { createdAt: "desc" },
+        take: 2,
+        select: {
+          sender: true,
+          messageText: true,
+          createdAt: true,
+        },
+      },
       _count: { select: { messages: true, escalationTickets: true } },
     },
   });
@@ -64,6 +73,11 @@ const getRecentActivity = async (userId, limit = 5) => {
     title: session.title,
     status: session.status,
     category: session.category,
+    summary: session.messages
+      .slice()
+      .reverse()
+      .map((message) => `${message.sender}: ${message.messageText}`)
+      .join(" "),
     messageCount: session._count.messages,
     escalationCount: session._count.escalationTickets,
     updatedAt: session.updatedAt,
@@ -73,8 +87,8 @@ const getRecentActivity = async (userId, limit = 5) => {
 export const DashboardService = {
   async getUserDashboard(user) {
     const [popularIssues, recentActivity] = await Promise.all([
-      mapCategoryCounts(6),
-      getRecentActivity(user.id, 5),
+      mapCategoryCounts(5),
+      getRecentActivity(user.id, 20),
     ]);
 
     return {

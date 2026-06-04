@@ -3,6 +3,11 @@ defineProps({
     faqs: {
         type: Array,
         default: () => []
+    },
+
+    showEscalate: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -72,12 +77,13 @@ const emit = defineEmits([
                 class="faq-btn"
                 @click="emit('view-faq')"
             >
-                <i class="fa-regular fa-book-open"></i>
+                <i class="fa-solid fa-circle-question"></i>
 
                 View FAQ
             </button>
 
             <button
+                v-if="showEscalate"
                 class="escalate-btn"
                 @click="emit('escalate')"
             >
