@@ -14,6 +14,9 @@ export const updateTicketStatus = (id, status) => api.patch(`/tickets/${id}/stat
 export const sendEmailSummary = (payload) => api.post('/reports/send-email', payload);
 export const getChatSession = (id) => api.get(`/chat/sessions/${id}`);
 
+// Ambil riwayat pesan real-time untuk tiket (akan aktif setelah backend siap)
+export const getTicketMessages = (ticketId) => api.get(`/tickets/${ticketId}/messages`);
+
 export default {
     getMyTickets,
     escalateTicket,
@@ -23,4 +26,5 @@ export default {
     updateTicketStatus,
     sendEmailSummary,
     getChatSession,
+    getTicketMessages,
 };
