@@ -5,6 +5,7 @@ const chatRoutes = [
         path: '/chat',
         name: 'chat',
         component: ChatView,
+        meta: { roles: ['USER'] }
     },
     {
         path: '/chat/:sessionId',

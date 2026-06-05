@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { clearAuth } from '../utils/auth'
 import '../assets/styles/helpdesk.css'
 
 defineProps({
@@ -18,7 +19,7 @@ const router = useRouter()
 const showLogoutModal = ref(false)
 
 const logout = () => {
-    localStorage.removeItem('token')
+    clearAuth()
     router.push('/')
 }
 

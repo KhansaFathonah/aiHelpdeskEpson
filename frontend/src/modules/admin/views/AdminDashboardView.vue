@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import AdminLayout from '../../../layouts/AdminLayout.vue'
 import adminService from '../../../services/admin.service'
+import TopIssueChart from '../../analytics/components/TopIssueChart.vue'
 
 const analytics  = ref(null)
 const topIssues  = ref([])
@@ -109,37 +110,7 @@ onMounted(async () => {
             </div>
 
             <!-- TOP ISSUES -->
-            <div class="detail-card" style="margin-top: 24px;">
-                <div class="detail-card-header">
-                    <i class="fa-solid fa-fire"></i>
-                    <h3>Top Issue Categories</h3>
-                </div>
-                <div class="detail-card-body">
-                    <div v-if="topIssues.length === 0" class="empty-inner">
-                        <i class="fa-solid fa-inbox"></i>
-                        <p>No issue data yet</p>
-                    </div>
-                    <div v-else class="top-issues-list">
-                        <div
-                            v-for="(issue, i) in topIssues"
-                            :key="issue.categoryId"
-                            class="top-issue-row"
-                        >
-                            <span class="top-issue-rank">#{{ i + 1 }}</span>
-                            <div class="top-issue-bar-wrap">
-                                <div class="top-issue-name">{{ issue.name }}</div>
-                                <div class="top-issue-bar-bg">
-                                    <div
-                                        class="top-issue-bar-fill"
-                                        :style="{ width: barWidth(issue.count) }"
-                                    ></div>
-                                </div>
-                            </div>
-                            <span class="top-issue-count">{{ issue.count }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <TopIssueChart :issues="topIssues" style="margin-top: 24px;" />
 
         </template>
 

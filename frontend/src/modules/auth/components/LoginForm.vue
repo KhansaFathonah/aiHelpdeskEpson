@@ -1,17 +1,27 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
 import authService from '../../../services/auth.service'
 
 import '../../../assets/styles/login.css'
 
 const router = useRouter()
+const route = useRoute()
 
 const employeeId = ref('')
 const password = ref('')
 const errorMessage = ref('')
 const loading = ref(false)
+
+// ── Handle Token Expired Redirect ──────────────────────────────
+onMounted(() => {
+    if (route.query.expired) {
+        errorMessage.value = 'Sesi Anda telah habis, silakan login kembali.'
+        // Clean URL seketika (tetapi toast tetap terlihat karena Vue Reactivity)
+        router.replace('/')
+    }
+})
 
 const handleLogin = async () => {
     errorMessage.value = ''
