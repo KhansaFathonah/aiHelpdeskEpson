@@ -2,11 +2,12 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-import authService from '../../../services/auth.service'
+import { useAuthStore } from '../../../stores/auth.store'
 
 import '../../../assets/styles/login.css'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const employeeId = ref('')
 const password = ref('')
@@ -25,15 +26,12 @@ const handleLogin = async () => {
     try {
         loading.value = true
 
-        const response = await authService.login({
+        const response = await authStore.login({
             employeeId: employeeId.value,
             password: password.value,
         })
 
         console.log(response)
-
-        localStorage.setItem('token', response.data.token)
-        localStorage.setItem('user', JSON.stringify(response.data.user))
 
         const role = response.data.user?.role
         

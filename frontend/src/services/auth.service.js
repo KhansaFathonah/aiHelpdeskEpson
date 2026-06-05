@@ -6,6 +6,8 @@ const login = async (payload) => {
     return response.data
 }
 
+export const loginService = login
+
 export default {
     login,
 }

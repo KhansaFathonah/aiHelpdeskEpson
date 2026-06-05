@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import adminRoutes from '../modules/admin/routes'
 import authRoutes from '../modules/auth/routes'
 import dashboardRoutes from '../modules/dashboard/routes'
 import chatRoutes from '../modules/chat/routes'
@@ -8,6 +9,7 @@ import ticketRoutes from '../modules/tickets/routes'
 
 const routes = [
     ...authRoutes,
+    ...adminRoutes,
     ...dashboardRoutes,
     ...chatRoutes,
     ...faqRoutes,
