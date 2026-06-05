@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { loginService } from '../services/auth.service'
+import { clearAuth } from '../utils/auth'
 
 const storedUser = () => {
     try {
@@ -48,14 +49,14 @@ export const useAuthStore = defineStore('auth', {
                 this.error = null
 
                 const response = await loginService(formData)
-                const session = response.data || {}
+                const session = response?.data || response || {}
 
                 this.setSession({
                     token: session.token,
                     user: session.user,
                 })
 
-                return response
+                return session
             } catch (error) {
                 this.error = error.response?.data?.message || 'Login gagal'
                 throw error
@@ -70,6 +71,7 @@ export const useAuthStore = defineStore('auth', {
                 token: null,
                 user: null,
             })
+            clearAuth()
         },
     },
 })

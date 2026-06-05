@@ -937,3 +937,388 @@ body {
 
 .status-select option { background: #25345b; color: #ffffff; }
 .filter-select option { background: #25345b; color: #ffffff; }
+
+/* ========================
+   REAL-TIME CHAT PANEL
+   ======================== */
+
+/* Header panel */
+.rtchat-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.rtchat-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rtchat-header-left h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.rtchat-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.rtchat-status-dot.connected { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,0.6); }
+.rtchat-status-dot.disconnected { background: #94a3b8; }
+
+.rtchat-status-label {
+    font-size: 11px;
+    color: #c7d0ea;
+    font-weight: 500;
+}
+
+/* Messages list */
+.rtchat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
+}
+
+/* Scrollbar */
+.rtchat-messages::-webkit-scrollbar { width: 4px; }
+.rtchat-messages::-webkit-scrollbar-track { background: transparent; }
+.rtchat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+/* Empty state */
+.rtchat-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #c7d0ea;
+}
+
+.rtchat-empty i {
+    font-size: 28px;
+    opacity: 0.3;
+}
+
+.rtchat-empty p {
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* Connection warning banner */
+.rtchat-offline-banner {
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #fcd34d;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 16px 8px;
+    flex-shrink: 0;
+}
+
+/* Bubble - USER (kanan, biru) */
+.rtchat-msg-row.is-user {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.rtchat-msg-row.is-user > div {
+    max-width: 78%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.rtchat-msg-row.is-user .rtchat-bubble {
+    background: #3b82f6;
+    color: #ffffff;
+    border-radius: 16px 4px 16px 16px;
+    padding: 10px 16px;
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 1;
+}
+
+.rtchat-msg-row.is-user .rtchat-bubble.optimistic {
+    opacity: 0.7;
+}
+
+/* Bubble - HELPDESK (kiri, putih-transparan) */
+.rtchat-msg-row.is-helpdesk {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.rtchat-helpdesk-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.15);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.rtchat-msg-row.is-helpdesk > div:last-child {
+    max-width: 78%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.rtchat-msg-row.is-helpdesk .rtchat-bubble {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #dce3f8;
+    border-radius: 4px 16px 16px 16px;
+    padding: 10px 16px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Bubble - SYSTEM (tengah) */
+.rtchat-msg-row.is-system {
+    display: flex;
+    justify-content: center;
+}
+
+.rtchat-msg-row.is-system .rtchat-bubble {
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    color: #fcd34d;
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 11px;
+}
+
+/* Sender name + timestamp */
+.rtchat-meta {
+    font-size: 10px;
+    color: #94a3b8;
+    margin-top: 4px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.rtchat-msg-row.is-user .rtchat-meta {
+    justify-content: flex-end;
+}
+
+/* Loading dots animation */
+.rtchat-loading {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 16px;
+    color: #c7d0ea;
+    font-size: 12px;
+}
+
+.rtchat-dots {
+    display: flex;
+    gap: 3px;
+}
+
+.rtchat-dots span {
+    width: 5px;
+    height: 5px;
+    background: #c7d0ea;
+    border-radius: 50%;
+    animation: rtchat-bounce 1.2s infinite ease-in-out;
+}
+
+.rtchat-dots span:nth-child(2) { animation-delay: 0.2s; }
+.rtchat-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes rtchat-bounce {
+    0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+/* Input area */
+.rtchat-input-area {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+.rtchat-input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 10px 14px;
+    color: #ffffff;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    resize: none;
+    outline: none;
+    max-height: 100px;
+    line-height: 1.5;
+    transition: border-color 0.15s;
+}
+
+.rtchat-input::placeholder { color: #94a3b8; }
+
+.rtchat-input:focus {
+    border-color: rgba(255,255,255,0.25);
+}
+
+.rtchat-input:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.rtchat-send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+    background: #3b82f6;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+}
+
+.rtchat-send-btn:hover:not(:disabled) {
+    background: #2563eb;
+    transform: scale(1.05);
+}
+
+.rtchat-send-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Closed/Resolved ticket notice */
+.rtchat-closed-notice {
+    text-align: center;
+    font-size: 12px;
+    color: #94a3b8;
+    padding: 10px 16px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    flex-shrink: 0;
+}
+
+/* ========================
+   TICKET CHAT MODAL (User side)
+   ======================== */
+
+.ticket-chat-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+}
+
+.ticket-chat-modal {
+    background: #1e2d4d;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    width: 100%;
+    max-width: 560px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ticket-chat-modal-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    background: #25345b;
+}
+
+.ticket-chat-modal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ticket-chat-modal-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+.ticket-chat-modal-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.ticket-chat-modal-subtitle {
+    font-size: 11px;
+    color: #c7d0ea;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ticket-chat-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: #c7d0ea;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: 0.15s;
+}
+
+.ticket-chat-close-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: #ffffff;
+}

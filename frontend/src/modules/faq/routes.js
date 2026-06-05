@@ -5,6 +5,7 @@ const faqRoutes = [
         path: "/faq",
         name: "faq",
         component: UserFaqView,
+        meta: { roles: ['USER'] }
     },
 ];
 

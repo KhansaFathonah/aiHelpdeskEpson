@@ -10,6 +10,9 @@ const adminRoutes = [
     {
         path: '/admin',
         component: AdminLayout,
+        meta: {
+            roles: ['ADMIN'],
+        },
         children: [
             {
                 path: '',
@@ -57,6 +60,7 @@ const adminRoutes = [
             },
             {
                 path: 'reports',
+                alias: 'email-logs',
                 name: 'admin-reports',
                 component: AdminReportsView,
                 meta: {

@@ -41,7 +41,7 @@ defineEmits([
         </div>
 
         <span class="faq-arrow">
-            {{ isOpen ? "⌃" : "⌄" }}
+            <i :class="['fa-solid', isOpen ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
         </span>
 
         </div>

@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import HelpdeskLayout from '../../../layouts/HelpdeskLayout.vue'
+import TicketChatPanel from '../components/TicketChatPanel.vue'
 
 import ticketService from '../../../services/ticket.service'
 import '../../../assets/styles/helpdesk.css'
@@ -180,12 +181,12 @@ onMounted(async () => {
 
                             </div>
 
-                            <!-- CHAT HISTORY -->
+                            <!-- AI CHAT HISTORY (Read-only reference) -->
                             <div class="detail-card">
 
                                 <div class="detail-card-header">
-                                    <i class="fa-solid fa-comments"></i>
-                                    <h3>Chat History</h3>
+                                    <i class="fa-solid fa-robot"></i>
+                                    <h3>AI Chat History</h3>
                                 </div>
 
                                 <div class="detail-card-body">
@@ -230,10 +231,30 @@ onMounted(async () => {
                                             v-if="chatMessages.length === 0"
                                             style="text-align:center; color:#94a3b8; font-size:13px; padding:16px;"
                                         >
-                                            No chat history
+                                            No AI chat history
                                         </div>
 
                                     </div>
+                                </div>
+
+                            </div>
+
+                            <!-- REAL-TIME CHAT (Helpdesk ↔ User) -->
+                            <div class="detail-card" style="min-height: 420px; display: flex; flex-direction: column;">
+
+                                <div class="detail-card-header">
+                                    <i class="fa-solid fa-headset"></i>
+                                    <h3>Live Chat with User</h3>
+                                </div>
+
+                                <div style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+                                    <TicketChatPanel
+                                        v-if="ticket"
+                                        :ticketId="ticket.id"
+                                        :status="ticket.status"
+                                        viewerRole="HELPDESK"
+                                        style="flex: 1;"
+                                    />
                                 </div>
 
                             </div>
@@ -351,6 +372,22 @@ onMounted(async () => {
                     </div>
 
                 </template>
+
+        <!-- TOAST NOTIFICATION -->
+        <Teleport to="body">
+            <div
+                v-if="toast"
+                class="toast"
+                :class="toast.type"
+            >
+                <i
+                    class="fa-solid"
+                    :class="toast.type === 'error' ? 'fa-circle-xmark' : 'fa-circle-check'"
+                ></i>
+                {{ toast.message }}
+            </div>
+        </Teleport>
+
     </HelpdeskLayout>
     
     
