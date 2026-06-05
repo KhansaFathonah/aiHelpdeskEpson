@@ -5,6 +5,7 @@ const authRoutes = [
         path: '/',
         name: 'login',
         component: LoginView,
+        meta: { public: true }
     },
 ]
 

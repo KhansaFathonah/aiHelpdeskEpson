@@ -56,11 +56,6 @@ const filteredFaqs = computed(() => {
             </button>
 
             <div class="header-info">
-                <img
-                    src="/logo.png"
-                    class="header-logo"
-                />
-
                 <div>
                     <h1>
                         Knowledge Base
@@ -105,6 +100,6 @@ const filteredFaqs = computed(() => {
     </div>
 </template>
 
-<style scoped>
+<style>
 @import "../../../assets/styles/faq.css";
 </style>

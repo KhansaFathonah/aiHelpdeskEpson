@@ -366,17 +366,36 @@ onMounted(fetchList)
 .chatlog-meta-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0;
-    padding: 16px 20px;
+    gap: 16px 24px;
+    padding: 20px 24px;
     border-bottom: 1px solid rgba(255,255,255,0.07);
+    background: rgba(0,0,0,0.15);
     flex-shrink: 0;
 }
 
 .chatlog-meta-item {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 6px 0;
+    align-items: flex-start;
+    text-align: left;
+    gap: 6px;
+    min-width: 0; /* Prevents flex children from overflowing */
+}
+
+.chatlog-meta-item .info-label {
+    font-size: 11px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.chatlog-meta-item .info-value {
+    font-size: 14px;
+    color: #ffffff;
+    font-weight: 500;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .chatlog-messages {

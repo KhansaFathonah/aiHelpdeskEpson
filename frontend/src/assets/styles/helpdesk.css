@@ -1038,12 +1038,18 @@ body {
     justify-content: flex-end;
 }
 
+.rtchat-msg-row.is-user > div {
+    max-width: 78%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
 .rtchat-msg-row.is-user .rtchat-bubble {
     background: #3b82f6;
     color: #ffffff;
     border-radius: 16px 4px 16px 16px;
-    max-width: 78%;
-    padding: 10px 14px;
+    padding: 10px 16px;
     font-size: 13px;
     line-height: 1.5;
     opacity: 1;
@@ -1075,13 +1081,19 @@ body {
     color: #ffffff;
 }
 
+.rtchat-msg-row.is-helpdesk > div:last-child {
+    max-width: 78%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
 .rtchat-msg-row.is-helpdesk .rtchat-bubble {
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.1);
     color: #dce3f8;
     border-radius: 4px 16px 16px 16px;
-    max-width: 78%;
-    padding: 10px 14px;
+    padding: 10px 16px;
     font-size: 13px;
     line-height: 1.5;
 }
