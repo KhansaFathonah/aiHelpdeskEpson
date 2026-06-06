@@ -5,9 +5,22 @@ import { assertEnum, requireFields, toInt } from "../../utils/validators.js";
 
 const ticketInclude = {
   user: { select: { id: true, employeeId: true, name: true, email: true, department: true } },
-  session: { select: { id: true, title: true, status: true } },
+  session: {
+    select: {
+      id: true,
+      title: true,
+      status: true,
+    },
+  },
   category: true,
   emailLogs: { orderBy: { sentAt: "desc" } },
+};
+
+const ESCALATION_REASONS = {
+  LOW_AI_CONFIDENCE: "Low AI Confidence",
+  NO_KNOWLEDGE_MATCH: "No Knowledge Match",
+  USER_REQUESTED_HUMAN_ASSISTANCE: "User Requested Human Assistance",
+  MANUAL_REVIEW_REQUIRED: "Manual Review Required",
 };
 
 const formatTicketCode = (ticketNumber) => {
@@ -22,6 +35,44 @@ const withTicketCode = (ticket) => {
   return {
     ...ticket,
     ticketCode: formatTicketCode(ticket.ticketNumber),
+  };
+};
+
+const latestMessageBySender = (messages, sender) => {
+  return [...messages].reverse().find((message) => message.sender === sender) ?? null;
+};
+
+const deriveEscalationSnapshot = (messages = []) => {
+  const sourceAiMessage = latestMessageBySender(messages, "AI");
+  const latestUserMessage = latestMessageBySender(messages, "USER");
+  const confidenceScore = typeof sourceAiMessage?.confidenceScore === "number"
+    ? sourceAiMessage.confidenceScore
+    : null;
+
+  if (latestUserMessage?.imageId) {
+    return {
+      confidenceScore,
+      escalationReason: ESCALATION_REASONS.MANUAL_REVIEW_REQUIRED,
+    };
+  }
+
+  if (!sourceAiMessage || confidenceScore == null) {
+    return {
+      confidenceScore: null,
+      escalationReason: ESCALATION_REASONS.NO_KNOWLEDGE_MATCH,
+    };
+  }
+
+  if (confidenceScore < 0.6) {
+    return {
+      confidenceScore,
+      escalationReason: ESCALATION_REASONS.LOW_AI_CONFIDENCE,
+    };
+  }
+
+  return {
+    confidenceScore,
+    escalationReason: ESCALATION_REASONS.USER_REQUESTED_HUMAN_ASSISTANCE,
   };
 };
 
@@ -68,6 +119,7 @@ export const TicketsService = {
     }
 
     const summary = buildConversationSummary(session.messages);
+    const escalationSnapshot = deriveEscalationSnapshot(session.messages);
 
     const ticket = await prisma.$transaction(async (tx) => {
 
@@ -77,6 +129,8 @@ export const TicketsService = {
           userId: session.userId,
           categoryId,
           summary,
+          confidenceScore: escalationSnapshot.confidenceScore,
+          escalationReason: escalationSnapshot.escalationReason,
           priority: payload.priority || "MEDIUM",
           status: "OPEN",
         },

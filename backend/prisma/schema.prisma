@@ -55,6 +55,8 @@ model User {
   chatSessions      ChatSession[]
   uploadedFiles     UploadedFile[]
   escalationTickets EscalationTicket[]
+  knowledgeCreated  KnowledgeDocument[] @relation("KnowledgeCreatedBy")
+  knowledgeUpdated  KnowledgeDocument[] @relation("KnowledgeUpdatedBy")
 
   @@index([role])
 }
@@ -122,16 +124,22 @@ model UploadedFile {
 model KnowledgeDocument {
   id                 String              @id @default(uuid())
   categoryId         String?
+  createdById        String?
+  updatedById        String?
   title              String
   source             String?
   content            String              @db.Text
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   category           IssueCategory?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  createdBy          User?               @relation("KnowledgeCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedBy          User?               @relation("KnowledgeUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   chunks             KnowledgeChunk[]
   suggestedQuestions SuggestedQuestion[]
 
   @@index([categoryId])
+  @@index([createdById])
+  @@index([updatedById])
   @@index([createdAt])
 }
 
@@ -166,6 +174,8 @@ model EscalationTicket {
   userId    String
   categoryId String?
   summary   String          @db.Text
+  confidenceScore Float?
+  escalationReason String?
   status    TicketStatus    @default(OPEN)
   priority  TicketPriority  @default(MEDIUM)
   createdAt DateTime        @default(now())
@@ -179,6 +189,7 @@ model EscalationTicket {
   @@index([userId])
   @@index([categoryId])
   @@index([status])
+  @@index([escalationReason])
 }
 
 model EmailLog {

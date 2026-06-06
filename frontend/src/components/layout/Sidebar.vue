@@ -74,17 +74,22 @@ const menuItems = [
     {
         label: 'Dashboard',
         to: '/admin/dashboard',
-        icon: 'fa-solid fa-table-cells-large',
+        icon: 'fa-solid fa-house',
     },
     {
         label: 'Knowledge Base',
         to: '/admin/knowledge',
-        icon: 'fa-regular fa-book-open',
+        icon: 'fa-solid fa-book',
     },
     {
         label: 'Chat Logs',
         to: '/admin/chat-logs',
         icon: 'fa-regular fa-message',
+    },
+    {
+        label: 'Email Logs',
+        to: '/admin/email-logs',
+        icon: 'fa-regular fa-envelope',
     },
     {
         label: 'Escalated Tickets',
@@ -127,13 +132,15 @@ const initials = computed(() => {
 <style scoped>
 .admin-sidebar {
     width: 204px;
-    min-height: 100vh;
+    height: 100vh;
+    flex-shrink: 0;
 
     background: #2f4559;
     color: #b8c4d0;
 
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 
     border-right: 1px solid rgba(15, 23, 42, 0.36);
 }
@@ -197,6 +204,7 @@ const initials = computed(() => {
     gap: 6px;
 
     padding: 0 12px;
+    overflow-y: auto;
 }
 
 .admin-sidebar__item {

@@ -83,18 +83,18 @@ const seedCategories = async () => {
   return result;
 };
 
-const upsertKnowledge = async ({ title, source, content, categoryId }) => {
+const upsertKnowledge = async ({ title, source, content, categoryId, adminUserId }) => {
   let document = await prisma.knowledgeDocument.findFirst({ where: { title } });
 
   if (document) {
     document = await prisma.knowledgeDocument.update({
       where: { id: document.id },
-      data: { title, source, content, categoryId },
+      data: { title, source, content, categoryId, updatedById: adminUserId },
     });
     await prisma.knowledgeChunk.deleteMany({ where: { documentId: document.id } });
   } else {
     document = await prisma.knowledgeDocument.create({
-      data: { title, source, content, categoryId },
+      data: { title, source, content, categoryId, createdById: adminUserId, updatedById: adminUserId },
     });
   }
 
@@ -110,6 +110,11 @@ const upsertKnowledge = async ({ title, source, content, categoryId }) => {
 };
 
 const seedKnowledge = async (categories) => {
+  const adminUser = await prisma.user.findFirst({
+    where: { role: "ADMIN" },
+    orderBy: { createdAt: "asc" },
+  });
+
   const documents = [
     {
       title: "Print Quality Banding Troubleshooting",
@@ -136,7 +141,7 @@ const seedKnowledge = async (categories) => {
 
   const created = [];
   for (const document of documents) {
-    created.push(await upsertKnowledge(document));
+    created.push(await upsertKnowledge({ ...document, adminUserId: adminUser?.id ?? null }));
   }
 
   return created;

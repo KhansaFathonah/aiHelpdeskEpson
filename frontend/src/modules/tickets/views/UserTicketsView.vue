@@ -50,7 +50,6 @@ onMounted(() => {
 });
 </script>
 
-
 <template>
     <div class="user-tickets-page">
         <div class="ticket-page-header">

@@ -15,21 +15,16 @@ const waitForMinimumResponseTime = async (startedAt) => {
   }
 };
 
-const confidenceScore = ({ provider, contexts }) => {
+const confidenceScore = ({ contexts }) => {
   const topScore = contexts
     .map((context) => Number(context.score))
     .find((score) => Number.isFinite(score));
 
   if (Number.isFinite(topScore)) {
-    const providerBoost = provider === "gemini" ? 0.1 : 0;
-    return Number(Math.min(0.95, Math.max(0.4, topScore + providerBoost)).toFixed(2));
+    return Number(Math.min(0.95, Math.max(0, topScore)).toFixed(2));
   }
 
-  if (contexts.length) {
-    return provider === "gemini" ? 0.74 : 0.62;
-  }
-
-  return provider === "gemini" ? 0.55 : 0.45;
+  return null;
 };
 
 const ensureUserSession = async (sessionId, user) => {
@@ -109,7 +104,7 @@ export const ChatService = {
         sessionId: session.id,
         sender: "AI",
         messageText: answer.text,
-        confidenceScore: confidenceScore({ provider: answer.provider, contexts }),
+        confidenceScore: confidenceScore({ contexts }),
         responseTimeMs,
       },
     });

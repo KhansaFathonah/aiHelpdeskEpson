@@ -58,7 +58,12 @@ const getReportSource = async (user, payload) => {
 
     return {
       summary: ticket.summary || buildConversationSummary(ticket.session.messages),
-      source: { ticketId: ticket.id, sessionId: ticket.sessionId },
+      source: {
+        ticketId: ticket.id,
+        sessionId: ticket.sessionId,
+        confidenceScore: ticket.confidenceScore,
+        escalationReason: ticket.escalationReason,
+      },
       messages: ticket.session.messages,
     };
   }
@@ -86,6 +91,8 @@ export const ReportsService = {
     return {
       summary: reportSource.summary,
       source: reportSource.source,
+      confidenceScore: reportSource.source.confidenceScore ?? null,
+      escalationReason: reportSource.source.escalationReason ?? null,
       attachments: fileAttachmentsFromMessages(reportSource.messages).map((attachment) => ({
         filename: attachment.filename,
         contentType: attachment.contentType,
@@ -123,6 +130,8 @@ export const ReportsService = {
         sent: true,
         emailLog,
         summary: summaryResult.summary,
+        confidenceScore: summaryResult.source.confidenceScore ?? null,
+        escalationReason: summaryResult.source.escalationReason ?? null,
         attachments: attachments.map((attachment) => ({
           filename: attachment.filename,
           contentType: attachment.contentType,
@@ -142,6 +151,8 @@ export const ReportsService = {
         sent: false,
         emailLog,
         summary: summaryResult.summary,
+        confidenceScore: summaryResult.source.confidenceScore ?? null,
+        escalationReason: summaryResult.source.escalationReason ?? null,
         attachments: attachments.map((attachment) => ({
           filename: attachment.filename,
           contentType: attachment.contentType,

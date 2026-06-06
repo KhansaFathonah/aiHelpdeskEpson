@@ -20,8 +20,9 @@ import NavbarAdmin from '../components/layout/NavbarAdmin.vue'
 <style scoped>
 .admin-layout {
     display: flex;
-    min-height: 100vh;
+    height: 100vh;
     background: #1b2c43;
+    overflow: hidden;
 }
 
 .admin-layout__main {
@@ -36,6 +37,7 @@ import NavbarAdmin from '../components/layout/NavbarAdmin.vue'
     flex: 1;
     padding: 30px 26px;
     overflow-y: auto;
+    min-height: 0;
 }
 
 :deep(.admin-page h2) {

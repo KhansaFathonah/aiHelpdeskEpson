@@ -4,7 +4,8 @@ import ChatLogsView from './views/ChatLogsView.vue'
 import AdminKnowledgeBaseView from '../knowledge/views/AdminKnowledgeBaseView.vue'
 import AdminAnalyticsView from '../analytics/views/AdminAnalyticsView.vue'
 import AdminReportsView from '../reports/views/AdminReportsView.vue'
-import TicketListView from '../tickets/views/TicketListView.vue'
+import EmailLogsView from './views/EmailLogsView.vue'
+import EscalatedTicketsView from './views/EscalatedTicketsView.vue'
 
 const adminRoutes = [
     {
@@ -45,7 +46,7 @@ const adminRoutes = [
             {
                 path: 'tickets',
                 name: 'admin-tickets',
-                component: TicketListView,
+                component: EscalatedTicketsView,
                 meta: {
                     title: 'Escalated Tickets',
                 },
@@ -60,11 +61,18 @@ const adminRoutes = [
             },
             {
                 path: 'reports',
-                alias: 'email-logs',
                 name: 'admin-reports',
                 component: AdminReportsView,
                 meta: {
                     title: 'Reports',
+                },
+            },
+            {
+                path: 'email-logs',
+                name: 'admin-email-logs',
+                component: EmailLogsView,
+                meta: {
+                    title: 'Email Logs',
                 },
             },
         ],

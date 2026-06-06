@@ -62,6 +62,8 @@ const refreshDocumentEmbeddings = async (documentId) => {
 
 const includeDocument = {
   category: true,
+  createdBy: { select: { id: true, employeeId: true, name: true, email: true } },
+  updatedBy: { select: { id: true, employeeId: true, name: true, email: true } },
   suggestedQuestions: true,
   _count: { select: { chunks: true } },
 };
@@ -89,7 +91,7 @@ export const KnowledgeService = {
     return document;
   },
 
-  async create(payload) {
+  async create(payload, actor = null) {
     requireFields(payload, ["title", "content"]);
 
     if (payload.categoryId) {
@@ -104,6 +106,8 @@ export const KnowledgeService = {
           source: payload.source || null,
           content: payload.content.trim(),
           categoryId: payload.categoryId || null,
+          createdById: actor?.id || null,
+          updatedById: actor?.id || null,
         },
       });
 
@@ -116,7 +120,7 @@ export const KnowledgeService = {
     return this.getById(document.id);
   },
 
-  async update(id, payload) {
+  async update(id, payload, actor = null) {
     const current = await prisma.knowledgeDocument.findUnique({ where: { id } });
     if (!current) throw new ApiError(404, "Knowledge document not found");
 
@@ -133,6 +137,7 @@ export const KnowledgeService = {
           source: payload.source === undefined ? current.source : payload.source || null,
           content: payload.content?.trim() ?? current.content,
           categoryId: payload.categoryId === undefined ? current.categoryId : payload.categoryId || null,
+          updatedById: actor?.id || current.updatedById || null,
         },
       });
 

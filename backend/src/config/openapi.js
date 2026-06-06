@@ -144,6 +144,17 @@ export const openApiSpec = {
           userId: { type: "string", format: "uuid" },
           categoryId: { type: "string", format: "uuid", nullable: true },
           summary: { type: "string" },
+          confidenceScore: { type: "number", nullable: true, example: 0.82 },
+          escalationReason: {
+            type: "string",
+            nullable: true,
+            enum: [
+              "Low AI Confidence",
+              "No Knowledge Match",
+              "User Requested Human Assistance",
+              "Manual Review Required",
+            ],
+          },
           status: { type: "string", enum: ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"] },
           priority: { type: "string", enum: ["LOW", "MEDIUM", "HIGH"] },
           createdAt: { type: "string", format: "date-time" },

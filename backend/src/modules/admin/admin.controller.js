@@ -17,3 +17,15 @@ export const getAnalytics = asyncHandler(async (req, res) => {
 export const getTopIssues = asyncHandler(async (req, res) => {
   return sendSuccess(res, await AdminService.getTopIssues());
 });
+
+export const getDashboardSummary = asyncHandler(async (req, res) => {
+  return sendSuccess(res, await AdminService.getDashboardSummary());
+});
+
+export const exportReport = asyncHandler(async (req, res) => {
+  const report = await AdminService.exportReport(req.body);
+
+  res.setHeader("Content-Type", report.contentType);
+  res.setHeader("Content-Disposition", `attachment; filename="${report.filename}"`);
+  return res.send(report.content);
+});
